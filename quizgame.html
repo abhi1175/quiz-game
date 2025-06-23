@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .quiz-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .answers button {
+            display: block;
+            width: 100%;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .answers button:hover {
+            background: #d5d5d5;
+        }
+        .score {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        #nextBtn {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #nextBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question">Loading question...</div>
+        <div id="answers" class="answers"></div>
+        <button id="nextBtn">Next</button>
+        <div id="score" class="score"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Berlin", "Madrid", "Paris", "Rome"],
+                answer: "Paris"
+            },
+            {
+                question: "Who wrote 'Hamlet'?",
+                options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen"],
+                answer: "William Shakespeare"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                answer: "4"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionEl = document.getElementById("question");
+        const answersEl = document.getElementById("answers");
+        const nextBtn = document.getElementById("nextBtn");
+        const scoreEl = document.getElementById("score");
+
+        function loadQuestion() {
+            const current = quizData[currentQuestionIndex];
+            questionEl.textContent = current.question;
+            answersEl.innerHTML = "";
+            current.options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(option);
+                answersEl.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selected) {
+            const correct = quizData[currentQuestionIndex].answer;
+            if (selected === correct) {
+                score++;
+            }
+            nextBtn.style.display = "block";
+            Array.from(answersEl.children).forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) {
+                    btn.style.backgroundColor = "#28a745";
+                } else if (btn.textContent === selected) {
+                    btn.style.backgroundColor = "#dc3545";
+                }
+            });
+        }
+
+        nextBtn.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+                nextBtn.style.display = "none";
+            } else {
+                showScore();
+            }
+        });
+
+        function showScore() {
+            questionEl.textContent = "Quiz Completed!";
+            answersEl.innerHTML = "";
+            nextBtn.style.display = "none";
+            scoreEl.textContent = `Your score: ${score}/${quizData.length}`;
+        }
+
+        // Initial call
+        loadQuestion();
+        nextBtn.style.display = "none";
+    </script>
+</body>
+</html>
